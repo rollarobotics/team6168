@@ -55,8 +55,6 @@ tHTIRS2 irSeeker;
 void initializeRobot()
 {
 	//eraseDisplay();
-	//nMotorEncoder[leftBack] = 0;
-	//nMotorEncoder[rightFront] = 0;
 	//servo[rampLease] = leaseInitial;
 	//servo[tail] = tailInitial;
 	//servo[rampDrop] = rampInitial;
@@ -169,25 +167,20 @@ void lowerLift()
   motor[lift] = 0;
 }
 
-void IRseeker()
+/*void IRseeker()
 {
-	  playSound(soundBlip);
     readSensor(&irSeeker);        //read the IR seeker
-    playSound(soundException);
 	  displayTextLine(1, "D:%4d", irSeeker.acDirection);
-	  if(irSeeker.acDirection == 5)
-	  {
-	  	playSound(soundBeepBeep);
-	  }
-	  else if(irSeeker.acDirection == 7)
-	  {
-	  	playSound(soundDownwardTones);
-	  }
-	  else
-	  {
 
-	  }
+}*/
+
+void kickstand()
+{
+	moveBackward(1.5);
+	turnLeft(90);
+	moveForward(3);
 }
+
 
 
 task main()
@@ -196,19 +189,52 @@ task main()
 	//waitForStart();
 	//irSeeker.acDirection;
 	initializeRobot();
+  int centerGoal;
 
-	moveBackward(7.5);
+	moveBackward(7.45);
+	stopBot();
+	wait10Msec(200);
+	turnLeft(90);
 	stopBot();
 	wait10Msec(100);
-	turnLeft(130);
-	wait10Msec(75);
-  moveBackward(2.50);
-  wait10Msec(75);
-	IRseeker();
+  moveBackward(2.5);
+  stopBot();
+  wait10Msec(100);
+	readSensor(&irSeeker);
+	centerGoal = irSeeker.acDirection;
+  //IRseeker();
+  displayTextLine(1, "D:%4d", irSeeker.acDirection);
 
+	if(centerGoal == 0)
+	{
+		stopBot();
+	}
+	else if(centerGoal <= 3 && centerGoal > 0)
+	{
+	 playSound(soundBeepBeep);
+	 moveForward(.2);
+	 wait10Msec(50);
+	 turnLeft(90);
+	 wait10Msec(50);
+	 moveBackward(1.5);
+	 wait10Msec(50);
+	 kickstand();
 
+  }
+  else if(centerGoal >= 3 && centerGoal < 5)
+  {
+   playSound(soundDownwardTones);
+  }
+  else if(centerGoal >= 5 && centerGoal <= 9)
+  {
+   playSound(soundFastUpwardTones);
+  }
+  else
+  {
+  	stopBot();
+  }
 
-
+  wait10Msec(1000);
 
 
 
