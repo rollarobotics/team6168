@@ -44,9 +44,9 @@
 const int tailInitial = 20;
 const int rampInitial = 127;
 const int leaseInitial = 127;
-const float countPF = 720.0;
+const float countPF = 1150.0;
 const float speedScale = .84;
-const float CPD = 12.5;
+const float CPD = 26;
 const float SPEED = 50;
 // Create struct to hold sensor data
 tHTIRS2 irSeeker;
@@ -73,10 +73,10 @@ void moveForward(float ft)
 {
 	while(nMotorEncoder[leftFront] <= (ft * countPF))
 	{
-		motor[leftBack] = SPEED;
-		motor[rightBack] = SPEED *speedScale;
-		motor[leftFront] = SPEED;
-		motor[rightFront] = SPEED * speedScale;
+		motor[leftBack] = 42;
+		motor[rightBack] = 40;
+		motor[leftFront] = 42;
+		motor[rightFront] = 40;
 		writeDebugStreamLine("X: %d", nMotorEncoder[leftFront]);
 	}
 
@@ -92,9 +92,9 @@ void moveBackward(float ft)
 {
 	while(nMotorEncoder[leftFront] >= (-ft * countPF))
 	{
-		motor[leftBack] = -48;
+		motor[leftBack] = -42;
 		motor[rightBack] = -40;
-		motor[leftFront] = -48;
+		motor[leftFront] = -42;
 		motor[rightFront] = -40;
 		writeDebugStreamLine("X: %d", nMotorEncoder[leftFront]);
 	}
@@ -111,9 +111,9 @@ void turnLeft(float degree)
 	while(nMotorEncoder[leftFront] >= (-degree * CPD) && nMotorEncoder[rightFront] <= (degree * CPD))
 	{
 		motor[leftBack] = -75;
-		motor[rightBack] = 63;
+		motor[rightBack] = 75;
 		motor[leftFront] = -75;
-		motor[rightFront] = 63;
+		motor[rightFront] = 75;
 		writeDebugStreamLine("X: %d", nMotorEncoder[leftFront]);
 	}
 	motor[leftBack] = 0;
@@ -191,13 +191,13 @@ task main()
 	initializeRobot();
   int centerGoal;
 
-	moveBackward(7.45);
+	moveBackward(5.6);
 	stopBot();
-	wait10Msec(200);
+	wait10Msec(150);
 	turnLeft(90);
 	stopBot();
 	wait10Msec(100);
-  moveBackward(2.5);
+  moveBackward(2.65);
   stopBot();
   wait10Msec(100);
 	readSensor(&irSeeker);
@@ -212,22 +212,44 @@ task main()
 	else if(centerGoal <= 3 && centerGoal > 0)
 	{
 	 playSound(soundBeepBeep);
-	 moveForward(.2);
+	 moveForward(.5);
 	 wait10Msec(50);
-	 turnLeft(90);
+	 turnLeft(80);
 	 wait10Msec(50);
-	 moveBackward(1.5);
+	 moveBackward(3.1);
 	 wait10Msec(50);
-	 kickstand();
+	 turnRight(100);
+	 wait10Msec(50);
+	 moveBackward(2);
+	 wait10Msec(50);
+
 
   }
   else if(centerGoal >= 3 && centerGoal < 5)
   {
    playSound(soundDownwardTones);
+   moveForward(1);
+	 wait10Msec(50);
+	 turnLeft(80);
+	 wait10Msec(50);
+	 moveBackward(2);
+	 wait10Msec(50);
+
   }
   else if(centerGoal >= 5 && centerGoal <= 9)
   {
    playSound(soundFastUpwardTones);
+   moveForward(.75);
+	 wait10Msec(50);
+	 turnLeft(90);
+	 wait10Msec(50);
+	 moveBackward(1.5);
+	 wait10Msec(50);
+	 turnRight(80);
+	 wait10Msec(50);
+	 moveBackward(2);
+	 wait10Msec(50);
+
   }
   else
   {
